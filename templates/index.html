@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Now Playing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="cover">
+      <img id="album-art" src="" alt="Album Cover">
+    </div>
+    <div class="info">
+      <div class="track-title" id="track-name">Loading...</div>
+      <div class="artist-name" id="artist-name"></div>
+      <div class="status">Playing</div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div class="extra-info">
+        <p><strong>Time: </strong> <span id="track-position">-</span></p>
+        <p><strong>Fulltime: </strong> <span id="track-duration">-</span></p>
+        <p><strong>Album: </strong> <span id="album-name">-</span></p>
+        <p><strong>Popularity: </strong> <span id="track-popularity">-</span>/100</p>
+        <p><strong>Playlist: </strong> <span id="playlist-name">-</span></p>
+      </div>
+    </div>
+    <button id="fullscreen-btn">⛶</button>
+  </div>
+
+   <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
