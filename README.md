@@ -47,6 +47,13 @@ CLIENT_SECRET = "your_client_secret_from_spotify"
 flask run -
 then open http://127.0.0.1:5000 in your browser.
 
+## Docker
+In terminal ->
+1. docker build -t now-playing-app .
+2. docker run --env-file .env -p 5000:5000 now-playing-app
+3. http://127.0.0.1:5000 - http://localhost:5000
+ 
+
 ## Requirements
 Spotify Premium account -
 Python 3.7+ -
