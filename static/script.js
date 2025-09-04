@@ -1,3 +1,5 @@
+let isPlaying = false;
+
 function msToTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
@@ -12,6 +14,8 @@ async function fetchNowPlaying() {
 
     if (data.error || !data.name) {
       document.getElementById("track-name").textContent = "Geen muziek afgespeeld";
+      isPlaying = false;
+      updatePlayButton();
       return;
     }
 
@@ -28,21 +32,61 @@ async function fetchNowPlaying() {
     document.getElementById("album-name").textContent = data.album;
     document.getElementById("playlist-name").textContent = data.playlist || "Onbekend";
 
+
+    isPlaying = data.is_playing ?? false;
+    updatePlayButton();
+
   } catch (e) {
     console.error("Fout bij ophalen van gegevens:", e);
   }
 }
 
-fetchNowPlaying();
-setInterval(fetchNowPlaying);
+
+async function apiCall(endpoint, method = "POST") {
+  try {
+    await fetch(`https://api.spotify.com/v1/me/player/${endpoint}`, {
+      method,
+      headers: {
+        "Authorization": `Bearer ${SPOTIFY_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (err) {
+    console.error("Spotify API fout:", err);
+  }
+}
+
+
+document.getElementById("play-btn").addEventListener("click", async () => {
+  if (isPlaying) {
+    await apiCall("pause", "PUT");
+    isPlaying = false;
+  } else {
+    await apiCall("play", "PUT");
+    isPlaying = true;
+  }
+  updatePlayButton();
+});
+
+document.getElementById("next-btn").addEventListener("click", () => apiCall("next"));
+document.getElementById("prev-btn").addEventListener("click", () => apiCall("previous"));
+
+
+function updatePlayButton() {
+  const btn = document.getElementById("play-btn");
+  btn.textContent = isPlaying ? "⏸" : "▶";
+}
+
 
 document.getElementById("fullscreen-btn").addEventListener("click", () => {
   const elem = document.documentElement;
   if (!document.fullscreenElement) {
-    elem.requestFullscreen().catch(err => {
-      alert(`Fullscreen mislukt: ${err.message}`);
-    });
+    elem.requestFullscreen().catch(err => alert(`Fullscreen mislukt: ${err.message}`));
   } else {
     document.exitFullscreen();
   }
 });
+
+
+fetchNowPlaying();
+setInterval(fetchNowPlaying, 1000);

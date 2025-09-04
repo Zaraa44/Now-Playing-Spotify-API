@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Now Playing</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <div class="container">
@@ -13,7 +13,7 @@
     <div class="info">
       <div class="track-title" id="track-name">Loading...</div>
       <div class="artist-name" id="artist-name"></div>
-      <div class="status">Playing</div>
+      <div class="status" id="status-text">Playing</div>
       <div class="progress-container">
         <div class="progress-bar" id="progress"></div>
       </div>
@@ -24,10 +24,20 @@
         <p><strong>Popularity: </strong> <span id="track-popularity">-</span>/100</p>
         <p><strong>Playlist: </strong> <span id="playlist-name">-</span></p>
       </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button id="prev-btn">⏮</button>
+        <button id="play-btn">⏸</button>
+        <button id="next-btn">⏭</button>
+      </div>
     </div>
     <button id="fullscreen-btn">⛶</button>
   </div>
 
-   <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    const SPOTIFY_TOKEN = "{{ access_token }}";
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

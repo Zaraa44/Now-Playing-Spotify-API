@@ -15,12 +15,14 @@ SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_BASE_URL = "https://api.spotify.com/v1"
 
-SCOPE = "user-read-currently-playing user-read-playback-state"
+SCOPE = "user-read-currently-playing user-read-playback-state user-modify-playback-state"
+
+
 
 @app.route("/")
 def index():
     if 'access_token' in session:
-        return render_template("index.html")
+        return render_template("index.html", access_token=session['access_token'])
     else:
         auth_url = SPOTIFY_AUTH_URL + '?' + urlencode({
             'client_id': CLIENT_ID,
@@ -52,7 +54,7 @@ def get_auth_headers():
 def get_current_playback(headers):
     res = requests.get(f"{SPOTIFY_API_BASE_URL}/me/player/currently-playing", headers=headers)
     if res.status_code == 204:
-        return None  # Nothing playing
+        return None  
     if res.status_code != 200:
         raise Exception(f"Failed to fetch playback: {res.status_code}")
     return res.json()
@@ -97,3 +99,28 @@ def current_track():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/play", methods=["PUT"])
+def play():
+    headers = get_auth_headers()
+    res = requests.put(f"{SPOTIFY_API_BASE_URL}/me/player/play", headers=headers)
+    return jsonify(res.json() if res.content else {"status": res.status_code})
+
+@app.route("/pause", methods=["PUT"])
+def pause():
+    headers = get_auth_headers()
+    res = requests.put(f"{SPOTIFY_API_BASE_URL}/me/player/pause", headers=headers)
+    return jsonify(res.json() if res.content else {"status": res.status_code})
+
+@app.route("/next", methods=["POST"])
+def next_track():
+    headers = get_auth_headers()
+    res = requests.post(f"{SPOTIFY_API_BASE_URL}/me/player/next", headers=headers)
+    return jsonify(res.json() if res.content else {"status": res.status_code})
+
+@app.route("/previous", methods=["POST"])
+def prev_track():
+    headers = get_auth_headers()
+    res = requests.post(f"{SPOTIFY_API_BASE_URL}/me/player/previous", headers=headers)
+    return jsonify(res.json() if res.content else {"status": res.status_code})
